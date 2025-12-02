@@ -1,0 +1,5 @@
+{
+  "name": "Basmach Prep AI",
+  "description": "An AI-powered tutor to prepare students for the IDF Basmach (Mamram/Computer Professions) entrance exams, focusing on pseudo-code, logic, and algorithmic thinking.",
+  "requestFramePermissions": []
+}
