@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Term } from '../types';
 import { DICTIONARY_TERMS } from '../data/terms';
-import { Search, ChevronDown, ChevronUp, BookOpen, Terminal, Brain, Code } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, BookOpen, Terminal, Brain, Code, Boxes, ImageIcon } from 'lucide-react';
 import { Button } from './Button';
 
 interface DictionaryViewProps {
@@ -10,7 +10,7 @@ interface DictionaryViewProps {
 
 export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeCategory, setActiveCategory] = useState<'all' | 'pseudo' | 'logic' | 'algo'>('all');
+  const [activeCategory, setActiveCategory] = useState<'all' | 'pseudo' | 'logic' | 'algo' | 'oop'>('all');
   const [expandedTermId, setExpandedTermId] = useState<string | null>(null);
 
   const filteredTerms = DICTIONARY_TERMS.filter(term => {
@@ -29,6 +29,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack }) => {
     { id: 'pseudo', label: 'הוראות מחשב', icon: <Terminal className="w-4 h-4" /> },
     { id: 'algo', label: 'אלגוריתמים', icon: <Code className="w-4 h-4" /> },
     { id: 'logic', label: 'לוגיקה', icon: <Brain className="w-4 h-4" /> },
+    { id: 'oop', label: 'מונחה עצמים', icon: <Boxes className="w-4 h-4" /> },
   ];
 
   return (
@@ -88,14 +89,24 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack }) => {
                   <div className={`p-2 rounded-lg ${
                     term.category === 'pseudo' ? 'bg-indigo-100 text-indigo-600' :
                     term.category === 'algo' ? 'bg-amber-100 text-amber-600' :
+                    term.category === 'oop' ? 'bg-rose-100 text-rose-600' :
                     'bg-purple-100 text-purple-600'
                   }`}>
                     {term.category === 'pseudo' ? <Terminal className="w-5 h-5" /> :
                      term.category === 'algo' ? <Code className="w-5 h-5" /> :
+                     term.category === 'oop' ? <Boxes className="w-5 h-5" /> :
                      <Brain className="w-5 h-5" />}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">{term.title}</h3>
+                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                      {term.title}
+                      {term.visualSvg && (
+                        <span className="bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <ImageIcon className="w-3 h-3" />
+                          ויזואלי
+                        </span>
+                      )}
+                    </h3>
                     <p className="text-sm text-slate-500">{term.description}</p>
                   </div>
                 </div>
@@ -108,21 +119,38 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack }) => {
 
               {expandedTermId === term.id && (
                 <div className="px-6 pb-6 pt-0 animate-in slide-in-from-top-2">
-                  <div className="border-t border-slate-100 pt-4">
-                    {term.codeExample && (
-                      <div className="mb-4">
-                        <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">דוגמה</div>
-                        <div className="bg-slate-900 text-emerald-400 p-4 rounded-lg font-mono text-sm shadow-inner overflow-x-auto" dir="ltr">
-                          <pre>{term.codeExample}</pre>
+                  <div className="border-t border-slate-100 pt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Left Column (Desktop) / Top (Mobile): Explanation & Code */}
+                    <div className="order-2 md:order-1">
+                      {term.codeExample && (
+                        <div className="mb-4">
+                          <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">דוגמה</div>
+                          <div className="bg-slate-900 text-emerald-400 p-4 rounded-lg font-mono text-sm shadow-inner overflow-x-auto" dir="ltr">
+                            <pre>{term.codeExample}</pre>
+                          </div>
                         </div>
+                      )}
+                      <div>
+                        <div className="text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">הסבר מורחב</div>
+                        <p className="text-slate-700 leading-relaxed bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+                          {term.explanation}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right Column (Desktop) / Bottom (Mobile): Visuals */}
+                    {term.visualSvg && (
+                      <div className="order-1 md:order-2">
+                        <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider flex items-center gap-1">
+                          <ImageIcon className="w-3 h-3" />
+                          המחשה ויזואלית
+                        </div>
+                        <div 
+                          className="bg-white border-2 border-slate-100 p-4 rounded-xl flex items-center justify-center h-full min-h-[160px]"
+                          dangerouslySetInnerHTML={{ __html: term.visualSvg }}
+                        />
                       </div>
                     )}
-                    <div>
-                      <div className="text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">הסבר מורחב</div>
-                      <p className="text-slate-700 leading-relaxed bg-blue-50/50 p-3 rounded-lg border border-blue-100">
-                        {term.explanation}
-                      </p>
-                    </div>
                   </div>
                 </div>
               )}

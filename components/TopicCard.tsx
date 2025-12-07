@@ -1,6 +1,6 @@
 import React from 'react';
 import { Topic } from '../types';
-import { Brain, Code, Terminal, Languages } from 'lucide-react';
+import { Brain, Code, Terminal, Languages, Boxes } from 'lucide-react';
 
 interface TopicCardProps {
   topic: Topic;
@@ -18,13 +18,13 @@ const TOPIC_CONFIG: Record<Topic, { label: string; icon: React.ReactNode; desc: 
   [Topic.LOGIC_SERIES]: { 
     label: "לוגיקה וצורות", 
     icon: <Brain className="w-8 h-8" />, 
-    desc: "זיהוי חוקיות, סדרות מספרים ומבחני אינטליגנציה.",
+    desc: "זיהוי חוקיות, סדרות מספרים ומבחני אינטליגנציה חזותיים.",
     color: "bg-purple-50 text-purple-600 border-purple-100 group-hover:border-purple-500"
   },
   [Topic.ALGORITHMS]: { 
     label: "חשיבה אלגוריתמית", 
     icon: <Code className="w-8 h-8" />, 
-    desc: "פתרון בעיות, תרשימי זרימה ויעילות.",
+    desc: "פתרון בעיות, תרשימי זרימה, רקורסיה ויעילות.",
     color: "bg-amber-50 text-amber-600 border-amber-100 group-hover:border-amber-500"
   },
   [Topic.ENGLISH]: { 
@@ -32,6 +32,12 @@ const TOPIC_CONFIG: Record<Topic, { label: string; icon: React.ReactNode; desc: 
     icon: <Languages className="w-8 h-8" />, 
     desc: "הבנת הנקרא ומושגים טכניים באנגלית.",
     color: "bg-sky-50 text-sky-600 border-sky-100 group-hover:border-sky-500"
+  },
+  [Topic.OOP]: { 
+    label: "מונחה עצמים (OOP)", 
+    icon: <Boxes className="w-8 h-8" />, 
+    desc: "מחלקות, ירושה, פולימורפיזם וכימוס.",
+    color: "bg-rose-50 text-rose-600 border-rose-100 group-hover:border-rose-500"
   },
 };
 
