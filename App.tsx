@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Topic, QuizState, AppScreen } from './types';
-import { generateQuestions } from './services/gemini';
+import { Topic, QuizState, AppScreen, Term, DifficultyLevel } from './types';
+import { generateQuestions, generateTermQuestions } from './services/gemini';
 import { TopicCard } from './components/TopicCard';
 import { Button } from './components/Button';
 import { DictionaryView } from './components/DictionaryView';
+import { TipsView } from './components/TipsView';
+import { ChatBot } from './components/ChatBot';
 import { 
   Bot, 
   CheckCircle2, 
@@ -20,12 +22,16 @@ import {
   SignalMedium,
   SignalLow,
   Sparkles,
-  Code2
+  Code2,
+  Lightbulb,
+  Dices
 } from 'lucide-react';
 
 const App: React.FC = () => {
   const [screen, setScreen] = useState<AppScreen>('onboarding');
   const [activeTopic, setActiveTopic] = useState<Topic | null>(null);
+  const [showDifficultyModal, setShowDifficultyModal] = useState(false);
+  const [topicForQuiz, setTopicForQuiz] = useState<Topic | null>(null);
   
   const [quizState, setQuizState] = useState<QuizState>({
     currentQuestionIndex: 0,
@@ -42,13 +48,22 @@ const App: React.FC = () => {
 
   // --- Actions ---
 
-  const startQuiz = async (topic: Topic) => {
+  const handleTopicClick = (topic: Topic) => {
+    setTopicForQuiz(topic);
+    setShowDifficultyModal(true);
+  };
+
+  const startQuiz = async (difficulty: DifficultyLevel) => {
+    const topic = topicForQuiz;
+    if (!topic) return;
+
+    setShowDifficultyModal(false);
     setActiveTopic(topic);
     setQuizState(prev => ({ ...prev, isLoading: true, error: undefined, questions: [], score: 0, currentQuestionIndex: 0, history: [], isComplete: false }));
     setScreen('quiz');
     
     try {
-      const questions = await generateQuestions(topic, 5); // Generate 5 questions
+      const questions = await generateQuestions(topic, 5, difficulty); // Generate 5 questions with difficulty
       setQuizState(prev => ({
         ...prev,
         questions,
@@ -59,6 +74,43 @@ const App: React.FC = () => {
         ...prev,
         isLoading: false,
         error: "מצטער, הייתה בעיה ביצירת השאלות. אנא נסה שנית."
+      }));
+    }
+  };
+
+  const handlePracticeTerm = async (term: Term) => {
+    setScreen('quiz');
+    // Determine a fallback topic based on category for UI consistency, or default to ALGORITHMS
+    let topicForState = Topic.ALGORITHMS;
+    if (term.category === 'pseudo') topicForState = Topic.PSEUDO_CODE;
+    if (term.category === 'logic') topicForState = Topic.LOGIC_SERIES;
+    if (term.category === 'oop') topicForState = Topic.OOP;
+
+    setActiveTopic(topicForState);
+    
+    setQuizState(prev => ({ 
+      ...prev, 
+      isLoading: true, 
+      error: undefined, 
+      questions: [], 
+      score: 0, 
+      currentQuestionIndex: 0, 
+      history: [], 
+      isComplete: false 
+    }));
+
+    try {
+      const questions = await generateTermQuestions(term, 3); // 3 focused questions for practice
+      setQuizState(prev => ({
+        ...prev,
+        questions,
+        isLoading: false
+      }));
+    } catch (err) {
+      setQuizState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: "לא הצלחנו ליצור שאלות למושג זה כרגע. אנא נסה שוב."
       }));
     }
   };
@@ -135,6 +187,26 @@ const App: React.FC = () => {
     setShowExplanation(false);
   };
 
+  const restartWithSameSettings = () => {
+      // In summary screen, topicForQuiz might be lost or we might want to use activeTopic.
+      // activeTopic is set when quiz starts.
+      if (activeTopic) {
+          // We don't know the last difficulty selected easily unless we store it.
+          // For simplicity, we'll default to 'Mixed' on quick restart, or we can reopen modal.
+          // Better UX: Restart with same difficulty.
+          // But 'startQuiz' needs explicit difficulty. 
+          // Let's just reopen the modal for now to be safe, or default to mixed.
+          // Or better: Re-use the last used difficulty if we stored it? 
+          // Let's keep it simple: Start mixed for "Retry" or trigger modal.
+          // Let's trigger modal for flexibility.
+          setTopicForQuiz(activeTopic);
+          setShowDifficultyModal(true);
+          setScreen('onboarding'); // This will be immediately covered by modal
+      } else {
+          resetApp();
+      }
+  };
+
   const getDifficultyBadge = (difficulty?: string) => {
     switch (difficulty) {
       case 'Easy':
@@ -151,17 +223,67 @@ const App: React.FC = () => {
             קשה
           </span>
         );
-      default: // Medium
+      default: // Medium or Mixed
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
             <SignalMedium className="w-3.5 h-3.5" />
-            בינוני
+            {difficulty === 'Mixed' ? 'מעורב' : 'בינוני'}
           </span>
         );
     }
   };
 
   // --- Screens ---
+
+  const renderDifficultyModal = () => {
+    if (!showDifficultyModal) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 className="text-xl font-black text-slate-900">בחר רמת קושי</h3>
+            <button onClick={() => setShowDifficultyModal(false)} className="text-slate-400 hover:text-slate-600">
+              <XCircle className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="p-6 grid grid-cols-2 gap-4">
+             <button 
+                onClick={() => startQuiz('Easy')}
+                className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300 transition-all gap-2"
+             >
+                <SignalLow className="w-8 h-8" />
+                <span className="font-bold">קל</span>
+             </button>
+
+             <button 
+                onClick={() => startQuiz('Medium')}
+                className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition-all gap-2"
+             >
+                <SignalMedium className="w-8 h-8" />
+                <span className="font-bold">בינוני</span>
+             </button>
+
+             <button 
+                onClick={() => startQuiz('Hard')}
+                className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-red-100 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-300 transition-all gap-2"
+             >
+                <SignalHigh className="w-8 h-8" />
+                <span className="font-bold">קשה</span>
+             </button>
+
+             <button 
+                onClick={() => startQuiz('Mixed')}
+                className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-all gap-2"
+             >
+                <Dices className="w-8 h-8" />
+                <span className="font-bold">מעורב</span>
+             </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const renderOnboarding = () => (
     <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col min-h-[calc(100vh-40px)]">
@@ -178,26 +300,35 @@ const App: React.FC = () => {
             בחר נושא והתחל לתרגל שאלות קשות שנכתבו בזמן אמת.
           </p>
           
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <Button 
               variant="outline" 
               onClick={() => setScreen('dictionary')}
               className="border-slate-300 text-slate-700 bg-white hover:bg-slate-50"
             >
               <Book className="w-5 h-5" />
-              מילון מושגים ודוגמאות
+              מילון מושגים
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setScreen('tips')}
+              className="border-slate-300 text-slate-700 bg-white hover:bg-slate-50"
+            >
+              <Lightbulb className="w-5 h-5" />
+              טיפים להצלחה
             </Button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="md:col-span-2 lg:col-span-1">
-            <TopicCard topic={Topic.PSEUDO_CODE} onClick={startQuiz} />
+            <TopicCard topic={Topic.PSEUDO_CODE} onClick={handleTopicClick} />
           </div>
-          <TopicCard topic={Topic.LOGIC_SERIES} onClick={startQuiz} />
-          <TopicCard topic={Topic.ALGORITHMS} onClick={startQuiz} />
-          <TopicCard topic={Topic.OOP} onClick={startQuiz} />
-          <TopicCard topic={Topic.ENGLISH} onClick={startQuiz} />
+          <TopicCard topic={Topic.LOGIC_SERIES} onClick={handleTopicClick} />
+          <TopicCard topic={Topic.ALGORITHMS} onClick={handleTopicClick} />
+          <TopicCard topic={Topic.OOP} onClick={handleTopicClick} />
+          <TopicCard topic={Topic.SQL} onClick={handleTopicClick} />
+          <TopicCard topic={Topic.ENGLISH} onClick={handleTopicClick} />
         </div>
       </div>
 
@@ -262,7 +393,7 @@ const App: React.FC = () => {
           <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
           <h3 className="text-xl font-bold text-slate-800 mb-2">אופס, משהו השתבש</h3>
           <p className="text-slate-600 mb-6">{quizState.error}</p>
-          <Button onClick={() => startQuiz(activeTopic!)}>נסה שוב</Button>
+          <Button onClick={() => restartWithSameSettings()}>נסה שוב</Button>
           <button onClick={resetApp} className="mt-4 text-slate-500 underline">חזור לתפריט הראשי</button>
         </div>
       );
@@ -303,8 +434,8 @@ const App: React.FC = () => {
             </h2>
             
             {question.codeSnippet && (
-              <div className="bg-slate-900 text-slate-50 p-6 rounded-xl font-mono text-sm md:text-base mb-8 overflow-x-auto" dir="ltr">
-                <pre>{question.codeSnippet}</pre>
+              <div className="bg-slate-900 text-slate-50 p-6 rounded-xl font-mono text-sm md:text-base mb-8" dir="ltr">
+                <pre className="whitespace-pre-wrap break-words">{question.codeSnippet}</pre>
               </div>
             )}
 
@@ -453,7 +584,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-3">
-            <Button onClick={() => startQuiz(activeTopic!)} variant="primary" className="w-full justify-center">
+            <Button onClick={() => restartWithSameSettings()} variant="primary" className="w-full justify-center">
               <RefreshCcw className="w-5 h-5" />
               תרגל שוב באותו נושא
             </Button>
@@ -469,9 +600,16 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-10">
       {screen === 'onboarding' && renderOnboarding()}
-      {screen === 'dictionary' && <DictionaryView onBack={() => setScreen('onboarding')} />}
+      {screen === 'dictionary' && <DictionaryView onBack={() => setScreen('onboarding')} onPracticeTerm={handlePracticeTerm} />}
+      {screen === 'tips' && <TipsView onBack={() => setScreen('onboarding')} />}
       {screen === 'quiz' && renderQuiz()}
       {screen === 'summary' && renderSummary()}
+      
+      {/* Modal */}
+      {renderDifficultyModal()}
+      
+      {/* Chat Bot */}
+      <ChatBot />
     </div>
   );
 };

@@ -205,6 +205,127 @@ A = 10
 
   // --- Algorithms (אלגוריתמים ומבני נתונים) ---
   {
+    id: 'a9',
+    title: 'סיבוכיות זמן (Time Complexity / Big O)',
+    category: 'algo',
+    description: 'דרך למדוד כמה מהיר האלגוריתם ביחס לכמות הקלט (N).',
+    codeExample: `O(1) - זמן קבוע
+O(N) - זמן לינארי
+O(N^2) - זמן ריבועי`,
+    explanation: 'מדד ליעילות הקוד. אנחנו מתעניינים ב"מקרה הגרוע ביותר" וכמה זמן הריצה יגדל אם נכפיל את כמות הנתונים.',
+    visualSvg: `<svg viewBox="0 0 150 120" class="w-full h-full">
+      <!-- Axes -->
+      <line x1="20" y1="100" x2="140" y2="100" stroke="#000" stroke-width="1.5"/> <!-- X (N) -->
+      <text x="140" y="115" font-size="10">N</text>
+      <line x1="20" y1="100" x2="20" y2="10" stroke="#000" stroke-width="1.5"/> <!-- Y (Time) -->
+      <text x="5" y="15" font-size="10">T</text>
+      
+      <!-- Curves -->
+      <path d="M 20 100 Q 60 90 100 10" stroke="#ef4444" stroke-width="2" fill="none"/>
+      <text x="105" y="20" font-size="10" fill="#ef4444" font-weight="bold">O(N²)</text>
+      
+      <path d="M 20 100 L 120 40" stroke="#3b82f6" stroke-width="2" fill="none"/> 
+      <text x="125" y="40" font-size="10" fill="#3b82f6" font-weight="bold">O(N)</text>
+      
+      <path d="M 20 80 L 130 80" stroke="#22c55e" stroke-width="2" fill="none"/>
+      <text x="135" y="80" font-size="10" fill="#22c55e" font-weight="bold">O(1)</text>
+    </svg>`
+  },
+  {
+    id: 'a16',
+    title: 'סוגי סיבוכיות נפוצים (Complexity Types)',
+    category: 'algo',
+    description: 'רשימת המחלקות הנפוצות לניתוח יעילות אלגוריתמים, מהמהיר לאיטי.',
+    codeExample: `O(1): גישה למערך (הכי מהיר)
+O(log N): חיפוש בינארי
+O(N): לולאה פשוטה
+O(N log N): מיון יעיל (Merge/Quick Sort)
+O(N^2): לולאה בתוך לולאה
+O(2^N): רקורסיה ללא זיכרון (הכי איטי)`,
+    explanation: 'כאשר N גדל, ההבדל בין הסיבוכיות נהיה קריטי. למשל, ב-O(2^N), תוספת קטנה ל-N מכפילה את זמן הריצה.'
+  },
+  {
+    id: 'a17',
+    title: 'חישוב סיבוכיות בקוד רגיל',
+    category: 'algo',
+    description: 'כיצד לנתח קוד איטרטיבי (לולאות) ולמצוא את ה-Big O.',
+    codeExample: `// דוגמה ל-O(N^2):
+for (i=0; i<N; i++) {       // רץ N פעמים
+   for (j=0; j<N; j++) {    // רץ N פעמים לכל i
+       print(i, j);         // פעולה קבועה O(1)
+   }
+}
+// סה"כ: N * N = N^2`,
+    explanation: 'כללים: 1. מתעלמים קבועים (O(2N) זה O(N)). 2. בלולאות עוקבות לוקחים את המקסימום. 3. בלולאות מקוננות מכפילים את הסיבוכיות.'
+  },
+  {
+    id: 'a18',
+    title: 'חישוב סיבוכיות ברקורסיה',
+    category: 'algo',
+    description: 'ניתוח עץ הקריאות הרקורסיבי: עומק העץ כפול מספר הענפים.',
+    codeExample: `פונקציה פיבונאצ'י(n):
+   אם n < 2 החזר n
+   החזר פיבונאצ'י(n-1) + פיבונאצ'י(n-2)
+
+// בכל שלב יש 2 קריאות (פיצול).
+// עומק העץ הוא N.
+// סיבוכיות: O(2^N)`,
+    explanation: 'ברקורסיה, שאל את עצמך: "כמה פעמים הפונקציה קוראת לעצמה?" ו-"עד כמה עמוק זה מגיע?". בחיפוש בינארי למשל, הקלט נחתך ב-2 כל פעם, ולכן זה O(log N).',
+    visualSvg: `<svg viewBox="0 0 200 100" class="w-full h-full">
+      <circle cx="100" cy="15" r="10" fill="#fff" stroke="#333"/>
+      
+      <line x1="100" y1="25" x2="70" y2="50" stroke="#333"/>
+      <line x1="100" y1="25" x2="130" y2="50" stroke="#333"/>
+      
+      <circle cx="70" cy="50" r="10" fill="#fff" stroke="#333"/>
+      <circle cx="130" cy="50" r="10" fill="#fff" stroke="#333"/>
+      
+      <line x1="70" y1="60" x2="55" y2="85" stroke="#333"/>
+      <line x1="70" y1="60" x2="85" y2="85" stroke="#333"/>
+      <line x1="130" y1="60" x2="115" y2="85" stroke="#333"/>
+      <line x1="130" y1="60" x2="145" y2="85" stroke="#333"/>
+      
+      <text x="100" y="95" text-anchor="middle" font-size="10">O(Branch^Depth)</text>
+    </svg>`
+  },
+  {
+    id: 'a10',
+    title: 'טבלת גיבוב / מילון (Hash Table / Hash Map)',
+    category: 'algo',
+    description: 'מבנה נתונים הממפה מפתח (Key) לערך (Value) ומאפשר חיפוש, הכנסה ומחיקה בזמן ממוצע של O(1).',
+    codeExample: `Hashtable H = new Hashtable();
+H.put("Apple", 5);
+H.put("Banana", 8);
+
+// המחשב מפעיל פונקציית Hash על "Apple"
+// ומקבל אינדקס, למשל 102.
+// הערך 5 נשמר בתא 102 במערך.`,
+    explanation: 'משתמש ב"פונקציית גיבוב" כדי להמיר את המפתח למספר (אינדקס). אם שני מפתחות מקבלים את אותו אינדקס, נוצרת "התנגשות" (Collision), שנפתרת בדרך כלל ע"י שרשור (Linked List) באותו תא.',
+    visualSvg: `<svg viewBox="0 0 300 120" class="w-full h-full">
+      <!-- Keys -->
+      <text x="10" y="30" font-size="12" font-weight="bold">Keys</text>
+      <rect x="10" y="40" width="50" height="25" fill="#fef3c7" stroke="#d97706"/>
+      <text x="35" y="57" text-anchor="middle" font-size="10">"Key 1"</text>
+      <rect x="10" y="70" width="50" height="25" fill="#fef3c7" stroke="#d97706"/>
+      <text x="35" y="87" text-anchor="middle" font-size="10">"Key 2"</text>
+      
+      <!-- Hash Function -->
+      <rect x="80" y="30" width="60" height="70" rx="8" fill="#e0e7ff" stroke="#4f46e5"/>
+      <text x="110" y="65" text-anchor="middle" font-size="10" font-weight="bold" fill="#3730a3">Hash()</text>
+      
+      <!-- Buckets -->
+      <text x="170" y="30" font-size="12" font-weight="bold">Buckets</text>
+      <rect x="170" y="40" width="100" height="20" fill="#f1f5f9" stroke="#94a3b8"/> <text x="220" y="54" text-anchor="middle" font-size="10">Idx 0</text>
+      <rect x="170" y="60" width="100" height="20" fill="#dcfce7" stroke="#16a34a"/> <text x="220" y="74" text-anchor="middle" font-size="10">Idx 1 (Value)</text>
+      <rect x="170" y="80" width="100" height="20" fill="#f1f5f9" stroke="#94a3b8"/> <text x="220" y="94" text-anchor="middle" font-size="10">Idx 2</text>
+      
+      <!-- Arrows -->
+      <path d="M 60 52 L 80 52" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <path d="M 60 82 L 80 82" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <path d="M 140 65 L 170 70" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+    </svg>`
+  },
+  {
     id: 'a1',
     title: 'מחסנית (Stack)',
     category: 'algo',
@@ -291,10 +412,98 @@ X = Dequeue(Q) // X=1, Q: [2]`,
     title: 'מיון בועות (Bubble Sort)',
     category: 'algo',
     description: 'אלגוריתם מיון פשוט המחליף זוגות סמוכים אם הם לא בסדר הנכון.',
-    codeExample: `מערך: [5, 1, 4]
-סיבוב 1: [1, 5, 4] (החלפה בין 5 ל-1)
-סיבוב 2: [1, 4, 5] (החלפה בין 5 ל-4)`,
-    explanation: 'המספרים "הכבדים" (הגדולים) מבעבעים לסוף המערך בכל איטרציה.'
+    codeExample: `void bubbleSort(int arr[], int n) {
+   int i, j;
+   for (i = 0; i < n-1; i++)      
+       for (j = 0; j < n-i-1; j++) 
+           if (arr[j] > arr[j+1])
+              swap(&arr[j], &arr[j+1]);
+}`,
+    explanation: 'המספרים "הכבדים" (הגדולים) מבעבעים לסוף המערך בכל איטרציה. סיבוכיות: O(N^2).'
+  },
+    {
+    id: 'a12',
+    title: 'מיון בחירה (Selection Sort)',
+    category: 'algo',
+    description: 'אלגוריתם שמוצא את המינימום במערך הלא ממויין ושם אותו בהתחלה.',
+    codeExample: `void selectionSort(int arr[], int n) {
+    int i, j, min_idx;
+    for (i = 0; i < n-1; i++) {
+        min_idx = i;
+        for (j = i+1; j < n; j++)
+          if (arr[j] < arr[min_idx])
+            min_idx = j;
+        swap(&arr[min_idx], &arr[i]);
+    }
+}`,
+    explanation: 'בכל סיבוב, האלגוריתם סורק את שאר המערך, מוצא את האיבר הקטן ביותר ומחליף אותו עם האיבר הנוכחי. סיבוכיות: O(N^2).'
+  },
+  {
+    id: 'a13',
+    title: 'מיון הכנסה (Insertion Sort)',
+    category: 'algo',
+    description: 'בניית מערך ממויין בהדרגה ע"י לקיחת איבר והכנסתו למקום הנכון בחלק שכבר מוין.',
+    codeExample: `void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}`,
+    explanation: 'דומה לסידור קלפים ביד. לוקחים קלף חדש ומשחילים אותו למיקום המתאים בין הקלפים שכבר מסודרים. יעיל למערכים קטנים או כמעט ממוינים.'
+  },
+  {
+    id: 'a14',
+    title: 'מיון מיזוג (Merge Sort)',
+    category: 'algo',
+    description: 'אלגוריתם רקורסיבי המחלק את המערך לחצאים, ממיין כל חצי, ואז ממזג אותם.',
+    codeExample: `// Merge part logic
+void merge(int arr[], int l, int m, int r) {
+    // ... create temp arrays L[] and R[]
+    // ... copy data to temp arrays
+    // ... merge temp arrays back into arr
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}`,
+    explanation: 'גישת "הפרד ומשול". המערך מחולק שוב ושוב עד לאיברים בודדים, ואז הם מחוברים (ממוזגים) בסדר הנכון. סיבוכיות יעילה: O(N log N).'
+  },
+  {
+    id: 'a15',
+    title: 'מיון מהיר (Quick Sort)',
+    category: 'algo',
+    description: 'בחירת איבר "ציר" (Pivot) וחלוקת המערך לאיברים קטנים ממנו וגדולים ממנו.',
+    codeExample: `int partition(int arr[], int low, int high) {
+    int pivot = arr[high]; 
+    int i = (low - 1); 
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j] < pivot) {
+            i++; 
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}`,
+    explanation: 'אלגוריתם המיון הנפוץ ביותר בשימוש מעשי. הוא ממיין "במקום" (ללא זיכרון נוסף רב) ובממוצע הוא מהיר מאוד O(N log N).'
   },
   {
     id: 'a5',
@@ -356,6 +565,48 @@ X = Dequeue(Q) // X=1, Q: [2]`,
     </svg>`
   },
   {
+    id: 'a19',
+    title: 'עץ חיפוש בינארי (BST)',
+    category: 'algo',
+    description: 'עץ שבו לכל צומת: כל הערכים בתת-העץ השמאלי קטנים ממנו, וכל הערכים בתת-העץ הימני גדולים ממנו.',
+    codeExample: `// הכנסת 7 לעץ:
+      10
+     /  \
+    5    15
+   / \
+  2   7 (הוכנס כאן)
+// 7 קטן מ-10 -> שמאלה
+// 7 גדול מ-5 -> ימינה`,
+    explanation: 'מבנה זה מאפשר חיפוש מהיר מאוד (O(log N)). כדי למצוא ערך, משווים אותו לצומת הנוכחי: אם הוא קטן יותר הולכים שמאלה, אם גדול יותר הולכים ימינה.',
+    visualSvg: `<svg viewBox="0 0 200 120" class="w-full h-full">
+      <!-- Edges -->
+      <line x1="100" y1="20" x2="60" y2="60" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="100" y1="20" x2="140" y2="60" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="60" y1="60" x2="40" y2="100" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="60" y1="60" x2="80" y2="100" stroke="#94a3b8" stroke-width="2"/>
+      
+      <!-- Nodes -->
+      <circle cx="100" cy="20" r="14" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+      <text x="100" y="24" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">10</text>
+      
+      <circle cx="60" cy="60" r="14" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+      <text x="60" y="64" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">5</text>
+      
+      <circle cx="140" cy="60" r="14" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+      <text x="140" y="64" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">15</text>
+      
+      <circle cx="40" cy="100" r="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <text x="40" y="104" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">2</text>
+      
+      <circle cx="80" cy="100" r="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <text x="80" y="104" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">7</text>
+      
+      <!-- Labels -->
+      <text x="70" y="35" font-size="9" fill="#64748b">&lt; 10</text>
+      <text x="130" y="35" font-size="9" fill="#64748b">&gt; 10</text>
+    </svg>`
+  },
+  {
     id: 'a8',
     title: 'רשימה מקושרת (Linked List)',
     category: 'algo',
@@ -382,66 +633,6 @@ X = Dequeue(Q) // X=1, Q: [2]`,
       <path d="M 180 40 L 210 40" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-link)"/>
       
       <text x="230" y="45" font-family="monospace" font-weight="bold" fill="#4b5563">NULL</text>
-    </svg>`
-  },
-  {
-    id: 'a9',
-    title: 'סיבוכיות זמן (Time Complexity / Big O)',
-    category: 'algo',
-    description: 'דרך למדוד כמה מהיר האלגוריתם ביחס לכמות הקלט (N).',
-    codeExample: `O(1) - זמן קבוע (גישה למערך)
-O(N) - זמן לינארי (לולאה אחת)
-O(N^2) - זמן ריבועי (לולאה בתוך לולאה)`,
-    explanation: 'אלגוריתם "יעיל" הוא כזה שהסיבוכיות שלו נמוכה. למשל, עדיף O(log N) על פני O(N).',
-    visualSvg: `<svg viewBox="0 0 150 120" class="w-full h-full">
-      <!-- Axes -->
-      <line x1="20" y1="100" x2="140" y2="100" stroke="#000" stroke-width="1.5"/> <!-- X (N) -->
-      <text x="140" y="115" font-size="10">N</text>
-      <line x1="20" y1="100" x2="20" y2="10" stroke="#000" stroke-width="1.5"/> <!-- Y (Time) -->
-      <text x="5" y="15" font-size="10">T</text>
-      
-      <!-- Curves -->
-      <path d="M 20 100 Q 60 90 100 10" stroke="#ef4444" stroke-width="2" fill="none"/>
-      <text x="105" y="20" font-size="10" fill="#ef4444" font-weight="bold">O(N²)</text>
-      
-      <path d="M 20 100 L 120 40" stroke="#3b82f6" stroke-width="2" fill="none"/> 
-      <text x="125" y="40" font-size="10" fill="#3b82f6" font-weight="bold">O(N)</text>
-      
-      <path d="M 20 80 L 130 80" stroke="#22c55e" stroke-width="2" fill="none"/>
-      <text x="135" y="80" font-size="10" fill="#22c55e" font-weight="bold">O(1)</text>
-    </svg>`
-  },
-  {
-    id: 'a10',
-    title: 'מילון / מפה (Hash Map / Dictionary)',
-    category: 'algo',
-    description: 'מבנה נתונים הממפה מפתח (Key) לערך (Value) ומאפשר חיפוש מהיר.',
-    codeExample: `Grades = {} // מילון ריק
-Grades["Danny"] = 90
-Grades["Sarah"] = 100
-// חיפוש מהיר O(1):
-ציון_שרה = Grades["Sarah"]`,
-    explanation: 'יעיל מאוד כשרוצים למצוא מידע לפי "שם" ולא לפי מיקום סידורי (כמו במערך).',
-    visualSvg: `<svg viewBox="0 0 250 100" class="w-full h-full">
-      <defs>
-        <marker id="arrow-map" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-          <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b" />
-        </marker>
-      </defs>
-      <rect x="20" y="20" width="60" height="30" fill="#fef3c7" stroke="#f59e0b"/>
-      <text x="50" y="40" text-anchor="middle" font-size="12" fill="#92400e">"Danny"</text>
-      
-      <rect x="20" y="60" width="60" height="30" fill="#fef3c7" stroke="#f59e0b"/>
-      <text x="50" y="80" text-anchor="middle" font-size="12" fill="#92400e">"Sarah"</text>
-      
-      <path d="M 80 35 L 140 35" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-map)"/>
-      <path d="M 80 75 L 140 75" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-map)"/>
-      
-      <circle cx="160" cy="35" r="15" fill="#fde68a" stroke="#d97706"/>
-      <text x="160" y="39" text-anchor="middle" font-weight="bold" fill="#b45309">90</text>
-      
-      <circle cx="160" cy="75" r="15" fill="#fde68a" stroke="#d97706"/>
-      <text x="160" y="79" text-anchor="middle" font-weight="bold" fill="#b45309">100</text>
     </svg>`
   },
   {

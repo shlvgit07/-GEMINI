@@ -1,10 +1,14 @@
+
 export enum Topic {
   PSEUDO_CODE = 'pseudo_code', // מחשבון קרב / הוראות מחשב
   LOGIC_SERIES = 'logic_series', // סדרות ומבחני צורות
   ENGLISH = 'english', // אנגלית טכנית
   ALGORITHMS = 'algorithms', // חשיבה אלגוריתמית
-  OOP = 'oop' // תכנות מונחה עצמים
+  OOP = 'oop', // תכנות מונחה עצמים
+  SQL = 'sql' // מסדי נתונים
 }
+
+export type DifficultyLevel = 'Easy' | 'Medium' | 'Hard' | 'Mixed';
 
 export interface Question {
   id: string;
@@ -16,7 +20,7 @@ export interface Question {
   optionsType?: 'text' | 'svg'; // Indicates if options are plain text or SVG strings
   correctIndex: number;
   explanation: string;
-  difficulty?: 'Easy' | 'Medium' | 'Hard'; // Difficulty level
+  difficulty?: DifficultyLevel; // Difficulty level
 }
 
 export interface QuizState {
@@ -33,7 +37,7 @@ export interface QuizState {
   error?: string;
 }
 
-export type AppScreen = 'onboarding' | 'quiz' | 'summary' | 'dictionary';
+export type AppScreen = 'onboarding' | 'quiz' | 'summary' | 'dictionary' | 'tips';
 
 export interface Term {
   id: string;
@@ -43,4 +47,19 @@ export interface Term {
   codeExample?: string;
   explanation: string;
   visualSvg?: string; // Optional visual representation of the concept
+}
+
+export interface Tip {
+  id: string;
+  title: string;
+  category: 'general' | 'trace' | 'algo' | 'time';
+  content: string;
+  icon?: any;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'model';
+  text: string;
+  timestamp: number;
 }

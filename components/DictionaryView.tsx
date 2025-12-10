@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Term } from '../types';
 import { DICTIONARY_TERMS } from '../data/terms';
-import { Search, ChevronDown, ChevronUp, BookOpen, Terminal, Brain, Code, Boxes, ImageIcon } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, BookOpen, Terminal, Brain, Code, Boxes, ImageIcon, PlayCircle } from 'lucide-react';
 import { Button } from './Button';
 
 interface DictionaryViewProps {
   onBack: () => void;
+  onPracticeTerm: (term: Term) => void;
 }
 
-export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack }) => {
+export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack, onPracticeTerm }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<'all' | 'pseudo' | 'logic' | 'algo' | 'oop'>('all');
   const [expandedTermId, setExpandedTermId] = useState<string | null>(null);
@@ -125,16 +126,24 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({ onBack }) => {
                       {term.codeExample && (
                         <div className="mb-4">
                           <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">דוגמה</div>
-                          <div className="bg-slate-900 text-emerald-400 p-4 rounded-lg font-mono text-sm shadow-inner overflow-x-auto" dir="ltr">
-                            <pre>{term.codeExample}</pre>
+                          <div className="bg-slate-900 text-emerald-400 p-4 rounded-lg font-mono text-sm shadow-inner" dir="ltr">
+                            <pre className="whitespace-pre-wrap break-words">{term.codeExample}</pre>
                           </div>
                         </div>
                       )}
                       <div>
                         <div className="text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">הסבר מורחב</div>
-                        <p className="text-slate-700 leading-relaxed bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+                        <p className="text-slate-700 leading-relaxed bg-blue-50/50 p-3 rounded-lg border border-blue-100 mb-4">
                           {term.explanation}
                         </p>
+                        <Button 
+                          onClick={() => onPracticeTerm(term)} 
+                          variant="secondary" 
+                          className="w-full md:w-auto text-sm"
+                        >
+                          <PlayCircle className="w-4 h-4" />
+                          תרגל נושא זה
+                        </Button>
                       </div>
                     </div>
 

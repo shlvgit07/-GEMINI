@@ -1,6 +1,6 @@
 import React from 'react';
 import { Topic } from '../types';
-import { Brain, Code, Terminal, Languages, Boxes } from 'lucide-react';
+import { Brain, Code, Terminal, Languages, Boxes, Database } from 'lucide-react';
 
 interface TopicCardProps {
   topic: Topic;
@@ -39,6 +39,12 @@ const TOPIC_CONFIG: Record<Topic, { label: string; icon: React.ReactNode; desc: 
     desc: "מחלקות, ירושה, פולימורפיזם וכימוס.",
     color: "bg-rose-50 text-rose-600 border-rose-100 group-hover:border-rose-500"
   },
+  [Topic.SQL]: {
+    label: "מסדי נתונים (SQL)",
+    icon: <Database className="w-8 h-8" />,
+    desc: "שאילתות, טבלאות, קשרי גומלין וסינון נתונים.",
+    color: "bg-cyan-50 text-cyan-600 border-cyan-100 group-hover:border-cyan-500"
+  }
 };
 
 export const TopicCard: React.FC<TopicCardProps> = ({ topic, onClick, disabled }) => {
